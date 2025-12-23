@@ -1,4 +1,4 @@
-import { googleLogo } from "@/assets/icon/icon";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
     Keyboard,
@@ -13,21 +13,24 @@ import {
     View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SvgXml } from 'react-native-svg';
-
 
 const Registration = () => {
+    const router = useRouter();
+    const [fullName, setFullName] = useState("");
+    const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [isChecked, setIsChecked] = useState(false);
 
+    const [fullNameFocused, setFullNameFocused] = useState(false);
+    const [userNameFocused, setUserNameFocused] = useState(false);
     const [emailFocused, setEmailFocused] = useState(false);
     const [passwordFocused, setPasswordFocused] = useState(false);
 
     return (
         <SafeAreaView style={styles.safe}>
             <StatusBar barStyle="light-content" backgroundColor="#070619" />
-
             <KeyboardAvoidingView
                 style={{ flex: 1 }}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -36,6 +39,38 @@ const Registration = () => {
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={styles.container}>
                         <Text style={styles.title}>Create Account</Text>
+
+                        {/* Full Name */}
+                        <Text style={styles.label}>Full Name</Text>
+                        <TextInput
+                            style={[
+                                styles.input,
+                                fullNameFocused && styles.focusedInput,
+                            ]}
+                            placeholder="Enter your full name"
+                            placeholderTextColor="#8A8A8A"
+                            value={fullName}
+                            onChangeText={setFullName}
+                            onFocus={() => setFullNameFocused(true)}
+                            onBlur={() => setFullNameFocused(false)}
+                            autoCapitalize="words"
+                        />
+
+                        {/* User Name */}
+                        <Text style={styles.label}>User Name</Text>
+                        <TextInput
+                            style={[
+                                styles.input,
+                                userNameFocused && styles.focusedInput,
+                            ]}
+                            placeholder="Enter your user name"
+                            placeholderTextColor="#8A8A8A"
+                            value={userName}
+                            onChangeText={setUserName}
+                            onFocus={() => setUserNameFocused(true)}
+                            onBlur={() => setUserNameFocused(false)}
+                            autoCapitalize="none"
+                        />
 
                         {/* Email */}
                         <Text style={styles.label}>Email</Text>
@@ -55,10 +90,7 @@ const Registration = () => {
                         />
 
                         {/* Password */}
-                        <Text style={[styles.label, { marginTop: 24 }]}>
-                            Password
-                        </Text>
-
+                        <Text style={styles.label}>Password</Text>
                         <View
                             style={[
                                 styles.passwordWrapper,
@@ -75,7 +107,6 @@ const Registration = () => {
                                 onFocus={() => setPasswordFocused(true)}
                                 onBlur={() => setPasswordFocused(false)}
                             />
-
                             <TouchableOpacity
                                 onPress={() => setShowPassword(!showPassword)}
                                 style={styles.eyeButton}
@@ -86,59 +117,65 @@ const Registration = () => {
                             </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity
-                            activeOpacity={0.7}
-                            onPress={() => {
-                                console.log("Forgot Password clicked");
-                                // navigation.navigate("ForgotPassword");
-                            }}
+                        {/* Confirm Password */}
+                        <Text style={styles.label}>Confirm Password</Text>
+                        <View
+                            style={[
+                                styles.passwordWrapper,
+                                passwordFocused && styles.focusedInput,
+                            ]}
                         >
-                            <Text
-                                style={{
-                                    color: "#E8E8E8",
-                                    fontSize: 13,
-                                    marginTop: 15,
-                                    textAlign: "right",
-                                }}
+                            <TextInput
+                                style={styles.passwordInput}
+                                placeholder="Confirm your password"
+                                placeholderTextColor="#999"
+                                secureTextEntry={!showPassword}
+                                value={password}
+                                onChangeText={setPassword}
+                                onFocus={() => setPasswordFocused(true)}
+                                onBlur={() => setPasswordFocused(false)}
+                            />
+                            <TouchableOpacity
+                                onPress={() => setShowPassword(!showPassword)}
+                                style={styles.eyeButton}
                             >
-                                Forgot Password?
+                                <Text style={styles.eyeText}>
+                                    {showPassword ? "🙈" : "👁️"}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Checkbox */}
+                        <TouchableOpacity
+                            style={styles.checkboxWrapper}
+                            onPress={() => setIsChecked(!isChecked)}
+                        >
+                            <View style={[styles.checkbox, isChecked && styles.checkedBox]}>
+                                {isChecked && <Text style={styles.checkmark}>✓</Text>}
+                            </View>
+                            <Text style={styles.checkboxText}>
+                                I agree to the Terms and Conditions
                             </Text>
                         </TouchableOpacity>
 
-                        {/* login btn  */}
 
-                        <TouchableOpacity style={{ marginTop: 90, borderWidth: 1, borderColor: "#F4F2EE", paddingVertical: 20, borderRadius: 10 }} >
-                            <Text style={{ color: "#F4F2EE", fontWeight: "bold", fontSize: 13, textAlign: "center" }} >Log in</Text>
+
+                        {/* Log in Button */}
+                        <TouchableOpacity style={styles.loginBtn}>
+                            <Text style={styles.loginText}>Register</Text>
                         </TouchableOpacity>
 
 
-                        <View style={styles.orWrapper}>
-                            <View style={styles.line} />
-                            <Text style={styles.orText}>OR</Text>
-                            <View style={styles.line} />
+
+
+
+                        {/* Register Text */}
+                        <View style={{ marginTop: 28 }}>
+                            <Text style={styles.registerText}>
+                                Already have an account? <Text onPress={() => { router.push("/") }} style={{ color: "white", fontWeight: 600 }}>Login</Text>
+                            </Text>
                         </View>
-
-
-
-                        <TouchableOpacity style={{ borderWidth: 1, borderColor: "#F4F2EE", paddingVertical: 20, borderRadius: 10, flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 10 }} >
-                            <SvgXml xml={googleLogo} width={24} height={24} /><Text style={{ color: "#F4F2EE", fontWeight: "bold", fontSize: 13, textAlign: "center" }} >Continue with Google</Text>
-                        </TouchableOpacity>
-
-                        <View style={{ marginTop: 58 }} >
-                            <Text style={{ color: "#F4F2EE", fontWeight: "bold", fontSize: 13, textAlign: 'center' }}  >You don’t have an account? <Text>Register</Text></Text>
-                        </View>
-
-
-
-
-
-
                     </View>
-
-
-
-
-
                 </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
         </SafeAreaView>
@@ -167,7 +204,7 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 13,
         fontWeight: "800",
-        marginBottom: 8,
+        marginBottom: 16,
         color: "#DEDCD9",
     },
     input: {
@@ -179,12 +216,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         backgroundColor: "#545454",
         color: "#fff",
+        marginBottom: 20,
     },
     focusedInput: {
-        borderColor: "#28A745", // focus color
+        borderColor: "#28A745",
     },
-
-    /* Password */
     passwordWrapper: {
         flexDirection: "row",
         alignItems: "center",
@@ -192,6 +228,7 @@ const styles = StyleSheet.create({
         borderColor: "#8A8A8A",
         borderRadius: 10,
         backgroundColor: "#545454",
+        marginBottom: 20,
     },
     passwordInput: {
         flex: 1,
@@ -206,22 +243,88 @@ const styles = StyleSheet.create({
     eyeText: {
         fontSize: 18,
     },
+    checkboxWrapper: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 20,
+        gap: 10,
+    },
+    checkbox: {
+        width: 20,
+        height: 20,
+        borderWidth: 1,
+        borderColor: "#8A8A8A",
+        borderRadius: 4,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    checkedBox: {
+        backgroundColor: "#28A745",
+        borderColor: "#28A745",
+    },
+    checkmark: {
+        color: "#fff",
+        fontSize: 14,
+        fontWeight: "bold",
+    },
+    checkboxText: {
+        color: "#FFFFFF",
+        fontSize: 11,
+    },
+    forgotText: {
+        color: "#E8E8E8",
+        fontSize: 13,
+        marginTop: 15,
+        textAlign: "right",
+    },
+    loginBtn: {
+        marginTop: 10,
+        borderWidth: 1,
+        borderColor: "#F4F2EE",
+        paddingVertical: 20,
+        borderRadius: 10,
+    },
+    loginText: {
+        color: "#F4F2EE",
+        fontWeight: "bold",
+        fontSize: 13,
+        textAlign: "center",
+    },
     orWrapper: {
         paddingVertical: 30,
         flexDirection: "row",
         alignItems: "center",
         gap: 10,
     },
-
     line: {
         flex: 1,
         height: 1,
         backgroundColor: "#E8E7E7",
     },
-
     orText: {
         color: "#FFFFFF",
         fontSize: 12,
         fontWeight: "500",
+    },
+    googleBtn: {
+        borderWidth: 1,
+        borderColor: "#F4F2EE",
+        paddingVertical: 20,
+        borderRadius: 10,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 10,
+    },
+    googleText: {
+        color: "#F4F2EE",
+        fontWeight: "bold",
+        fontSize: 13,
+        textAlign: "center",
+    },
+    registerText: {
+        color: "#F4F2EE",
+        fontSize: 13,
+        textAlign: "center",
     },
 });
